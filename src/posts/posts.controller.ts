@@ -8,13 +8,13 @@ export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   @Post()
-  create(@Body() createPostDto: CreatePostDto) {
-    return this.postsService.create(createPostDto);
+  createpost(@Body() body: CreatePostDto) {
+    return this.postsService.createpost(body);
   }
 
   @Get()
-  findAll() {
-    return this.postsService.findAll();
+  findAllposts() {
+    return this.postsService.findAllPosts();
   }
 
   @Get(':id')
