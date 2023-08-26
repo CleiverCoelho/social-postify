@@ -24,4 +24,8 @@ export class PostsRepository {
     async updatePostByid (id : number, body: UpdatePostDto) {
         return await this.prisma.post.update({ where: { id }, data: body });
     }
+
+    async deletePostByid (id : number) {
+        return await this.prisma.post.delete({ where: { id } });
+    }
 }

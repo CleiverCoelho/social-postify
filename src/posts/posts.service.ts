@@ -33,7 +33,7 @@ export class PostsService {
     return await this.postsRepository.updatePostByid(id, body);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} post`;
+  async deletePostById(id: number) {
+    return this.postsRepository.deletePostByid(id);
   }
 }
