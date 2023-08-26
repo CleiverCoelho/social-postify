@@ -35,6 +35,7 @@ export class PublicationsService {
 
   async getPubById(id: number) {
     const mediaData = await this.pubRepository.getPubById(id);
+    if(mediaData.length === 0) throw new NotFoundException(`There is no publication for given id=${id}`);
     const responseMedia = mediaData.map(({ id, mediaId, postId, date }) => { 
       return { id, mediaId, postId, date }
     })
