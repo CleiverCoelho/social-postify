@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, HttpException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, HttpException, Put } from '@nestjs/common';
 import { PublicationsService } from './publications.service';
 import { CreatePublicationDto } from './dto/create-publication.dto';
 import { UpdatePublicationDto } from './dto/update-publication.dto';
@@ -23,16 +23,28 @@ export class PublicationsController {
 
   @Get(':id')
   getPubById(@Param('id', ParseIntPipe) id: number) {
-    return this.publicationsService.getPubById(+id);
+    try {
+      return this.publicationsService.getPubById(+id);
+    }catch(error){
+      throw new HttpException(error.message, error.statusCode);
+    }
   }
 
-  @Patch(':id')
+  @Put(':id')
   updatePubById(@Param('id', ParseIntPipe) id: number, @Body() updatePublicationDto: UpdatePublicationDto) {
-    return this.publicationsService.updatePubById(+id, updatePublicationDto);
+    try {
+      return this.publicationsService.updatePubById(+id, updatePublicationDto);
+    }catch(error){
+      throw new HttpException(error.message, error.statusCode);
+    }
   }
 
   @Delete(':id')
   deletePubById(@Param('id', ParseIntPipe) id: number) {
-    return this.publicationsService.deletePubById(+id);
+    try {
+      return this.publicationsService.deletePubById(+id);
+    }catch(error){
+      throw new HttpException(error.message, error.statusCode);
+    }
   }
 }
