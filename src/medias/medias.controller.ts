@@ -24,7 +24,11 @@ export class MediasController {
 
   @Get(':id')
   findOneMedia(@Param('id', ParseIntPipe) id: number) {
-    return this.mediasService.getMediaById(id);
+    try {
+      return this.mediasService.getMediaById(id);
+    } catch (error) {
+      throw new HttpException(error.message, error.statusCode);
+    }
   }
 
   @Put(':id')

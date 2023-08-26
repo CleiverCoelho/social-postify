@@ -1,4 +1,4 @@
-import { Body, ConflictException, Injectable } from '@nestjs/common';
+import { Body, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateMediaDto } from './dto/create-media.dto';
 import { UpdateMediaDto } from './dto/update-media.dto';
 import { MediasRepository } from './medias.repository';
@@ -27,7 +27,7 @@ export class MediasService {
     const responseMedia = mediaData.map(({ id, title, username }) => { 
       return { id, title, username }
     })
-    
+    if(responseMedia.length === 0) throw new NotFoundException(`media with id=${id} was not found!`);
     return responseMedia;
   }
 
