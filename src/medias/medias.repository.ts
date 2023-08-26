@@ -2,10 +2,22 @@ import { PrismaService } from "src/prisma/prisma.service";
 import { CreateMediaDto } from "./dto/create-media.dto";
 import { Injectable } from "@nestjs/common";
 import { UpdateMediaDto } from "./dto/update-media.dto";
+import { title } from "process";
 
 @Injectable()
 export class MediasRepository {
     constructor (private readonly prisma : PrismaService) { }
+
+    async checkExistingMedia(body : CreateMediaDto) {
+        return await this.prisma.media.findUnique({
+            where: { 
+                title_username : {
+                    title: body.title,
+                    username: body.username
+                }
+             }
+        })
+    }
 
     async createMedia (body : CreateMediaDto) {
         return await this.prisma.media.create({

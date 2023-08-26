@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Param, Delete, ParseIntPipe, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, ParseIntPipe, Put, HttpStatus, HttpException } from '@nestjs/common';
 import { MediasService } from './medias.service';
 import { CreateMediaDto } from './dto/create-media.dto';
 import { UpdateMediaDto } from './dto/update-media.dto';
+import e from 'express';
 
 @Controller('medias')
 export class MediasController {
@@ -9,7 +10,11 @@ export class MediasController {
 
   @Post()
   createMedia(@Body() createMediaDto: CreateMediaDto) {
-    return this.mediasService.createMedia(createMediaDto);
+    try{
+      return this.mediasService.createMedia(createMediaDto);
+    } catch(error){
+      throw new HttpException(error.message, HttpStatus.CONFLICT);
+    }
   }
 
   @Get()

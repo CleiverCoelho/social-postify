@@ -1,4 +1,4 @@
-import { Body, Injectable } from '@nestjs/common';
+import { Body, ConflictException, Injectable } from '@nestjs/common';
 import { CreateMediaDto } from './dto/create-media.dto';
 import { UpdateMediaDto } from './dto/update-media.dto';
 import { MediasRepository } from './medias.repository';
@@ -9,6 +9,8 @@ export class MediasService {
   
   async createMedia ( body : CreateMediaDto) {
     const { title, username } = body;
+    const checkExistingMedia = await this.mediasRepository.checkExistingMedia({ title, username });
+    if(checkExistingMedia) throw new ConflictException();
     return await this.mediasRepository.createMedia({ title, username });
   }
 
