@@ -20,8 +20,13 @@ export class PostsService {
     return responseMedia;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} post`;
+  async getPostbyId(id: number) {
+    const mediaData = await this.postsRepository.getPostById(id); 
+    const responseMedia = mediaData.map(({ id, title, text, image }) => { 
+      if(image) return { id, title, text, image }
+      else return { id, title, text }
+    })
+    return responseMedia;
   }
 
   update(id: number, updatePostDto: UpdatePostDto) {

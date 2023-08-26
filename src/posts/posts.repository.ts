@@ -15,4 +15,8 @@ export class PostsRepository {
     async findAllPosts () {
         return await this.prisma.post.findMany({})
     }
+
+    async getPostById (id : number) {
+        return await this.prisma.post.findMany({ where: { id } })
+    }
 }
