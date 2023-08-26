@@ -1,13 +1,27 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException, forwardRef } from '@nestjs/common';
 import { CreatePublicationDto } from './dto/create-publication.dto';
 import { UpdatePublicationDto } from './dto/update-publication.dto';
 import { PublicationsRepository } from './publications.repository';
+import { MediasService } from 'src/medias/medias.service';
+import { PostsService } from 'src/posts/posts.service';
+import { NotFoundError, find } from 'rxjs';
 
 @Injectable()
 export class PublicationsService {
-  constructor( private readonly pubRepository : PublicationsRepository) { }
+  constructor(
+    private readonly pubRepository: PublicationsRepository,
+    @Inject(forwardRef(() => PostsService))
+    private readonly postsService : PostsService,
+    @Inject(forwardRef(() => MediasService))
+    private readonly mediasService: MediasService,
+  ) { }
 
   async createPub(body: CreatePublicationDto) {
+    const { mediaId, postId } = body;
+    // como puxa as funcoes da service o throw ja eh feito
+    // a partir da propria
+    await this.postsService.getPostbyId(postId);
+    await this.mediasService.getMediaById(mediaId);
     return await this.pubRepository.createPub(body);
   }
 

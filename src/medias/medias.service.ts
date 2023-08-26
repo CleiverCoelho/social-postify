@@ -1,14 +1,14 @@
-import { Body, ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { Body, ConflictException, ForbiddenException, Inject, Injectable, NotFoundException, forwardRef } from '@nestjs/common';
 import { CreateMediaDto } from './dto/create-media.dto';
 import { UpdateMediaDto } from './dto/update-media.dto';
 import { MediasRepository } from './medias.repository';
-import { PublicationsRepository } from 'src/publications/publications.repository';
 import { PublicationsService } from 'src/publications/publications.service';
 
 @Injectable()
 export class MediasService {
   constructor(
     private readonly mediasRepository : MediasRepository, 
+    @Inject(forwardRef(() => PublicationsService))
     private readonly pubService : PublicationsService 
   ) { }
   

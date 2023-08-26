@@ -1,11 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable, NotFoundException, forwardRef } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PostsRepository } from './posts.repository';
+import { PublicationsService } from 'src/publications/publications.service';
 
 @Injectable()
 export class PostsService {
-  constructor(private readonly postsRepository: PostsRepository) { }
+  constructor(
+    private readonly postsRepository: PostsRepository,
+    @Inject(forwardRef(() => PublicationsService))
+    private readonly pubService: PublicationsService
+  ) { }
 
   async createpost(body: CreatePostDto) {
     return await this.postsRepository.createPost(body);
@@ -22,7 +27,7 @@ export class PostsService {
 
   async getPostbyId(id: number) {
     const checkForPost = await this.postsRepository.getPostById(id);
-    if(checkForPost.length === 0) throw new NotFoundException(`The update request for postId=${id} does not exist`);
+    if(checkForPost.length === 0) throw new NotFoundException(`The request for postId=${id} does not exist`);
     
     const mediaData = await this.postsRepository.getPostById(id); 
     const responseMedia = mediaData.map(({ id, title, text, image }) => { 
@@ -43,6 +48,8 @@ export class PostsService {
     const checkForPost = await this.postsRepository.getPostById(id);
     if(checkForPost.length === 0) throw new NotFoundException(`The update request for postId=${id} does not exist`);
     
+    const checkForpostPub = await this.pubService.getPubByPostId(id);
+    if(checkForpostPub.length > 0) throw new ForbiddenException(`There is an active publication for given postId=${id}`);
     return this.postsRepository.deletePostByid(id);
   }
 }
