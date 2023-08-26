@@ -21,6 +21,14 @@ export class PublicationsRepository {
         return await this.prisma.publication.findMany({ where: { id } });
     }
 
+    async getPubByMediaId (id : number) {
+        return await this.prisma.publication.findMany({ where: { mediaId: id } });
+    }
+
+    async getPubByPostId (id : number) {
+        return await this.prisma.publication.findMany({ where: { postId: id } });
+    }
+
     async updatePubById (id : number, body: UpdatePublicationDto) {
         return await this.prisma.publication.update({ where: { id }, data: body });
     }

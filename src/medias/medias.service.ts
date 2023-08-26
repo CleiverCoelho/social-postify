@@ -1,11 +1,16 @@
-import { Body, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { Body, ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateMediaDto } from './dto/create-media.dto';
 import { UpdateMediaDto } from './dto/update-media.dto';
 import { MediasRepository } from './medias.repository';
+import { PublicationsRepository } from 'src/publications/publications.repository';
+import { PublicationsService } from 'src/publications/publications.service';
 
 @Injectable()
 export class MediasService {
-  constructor(private readonly mediasRepository : MediasRepository) { }
+  constructor(
+    private readonly mediasRepository : MediasRepository, 
+    private readonly pubService : PublicationsService 
+  ) { }
   
   async createMedia ( body : CreateMediaDto) {
     const { title, username } = body;
@@ -33,12 +38,19 @@ export class MediasService {
 
   async updateMediaById(id: number, body: UpdateMediaDto) {
     const { title, username } = body;
+    const notMedia = await this.mediasRepository.getMediaById(id);
+    if(notMedia.length === 0) throw new NotFoundException(`the id=${id} was not found for the update`);
     const checkExistingMedia = await this.mediasRepository.checkExistingMedia({ title, username });
-    if(checkExistingMedia) throw new ConflictException();
+    if(checkExistingMedia) throw new ConflictException(`${notMedia}`);
     return await this.mediasRepository.updateMediaById(id, body);
   }
 
   async deleteMediaById(id: number) {
+    const notMedia = await this.mediasRepository.getMediaById(id);
+    if(notMedia.length === 0) throw new NotFoundException(`the id=${id} was not found for the update`);
+    
+    const checkForMediaPub = await this.pubService.getPubByMediaId(id);
+    if(checkForMediaPub.length > 0) throw new ForbiddenException(`there is already a publication associated with the mediaId=${id}`);
     return this.mediasRepository.deleteMediaById(id);
   }
 }

@@ -9,5 +9,6 @@ import { PrismaModule } from 'src/prisma/prisma.module';
   imports: [PrismaModule],
   controllers: [PublicationsController],
   providers: [PublicationsService, PublicationsRepository],
+  exports: [PublicationsService]
 })
 export class PublicationsModule {}

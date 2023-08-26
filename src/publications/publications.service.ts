@@ -19,8 +19,24 @@ export class PublicationsService {
     return responseMedia;  
   }
 
-  async getMediaById(id: number) {
+  async getPubById(id: number) {
     const mediaData = await this.pubRepository.getPubById(id);
+    const responseMedia = mediaData.map(({ id, mediaId, postId, date }) => { 
+      return { id, mediaId, postId, date }
+    })
+    return responseMedia;  
+  }
+
+  async getPubByMediaId(id: number) {
+    const mediaData = await this.pubRepository.getPubByMediaId(id);
+    const responseMedia = mediaData.map(({ id, mediaId, postId, date }) => { 
+      return { id, mediaId, postId, date }
+    })
+    return responseMedia;  
+  }
+
+  async getPubByPostId(id: number) {
+    const mediaData = await this.pubRepository.getPubByPostId(id);
     const responseMedia = mediaData.map(({ id, mediaId, postId, date }) => { 
       return { id, mediaId, postId, date }
     })

@@ -42,6 +42,10 @@ export class MediasController {
 
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
-    return this.mediasService.deleteMediaById(id);
+    try{
+      return this.mediasService.deleteMediaById(id);
+    }catch(error){
+      throw new HttpException(error.message, error.statusCode);
+    }
   }
 }

@@ -18,8 +18,8 @@ export class PublicationsController {
   }
 
   @Get(':id')
-  getMediaById(@Param('id', ParseIntPipe) id: number) {
-    return this.publicationsService.getMediaById(+id);
+  getPubById(@Param('id', ParseIntPipe) id: number) {
+    return this.publicationsService.getPubById(+id);
   }
 
   @Patch(':id')
