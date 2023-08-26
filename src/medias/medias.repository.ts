@@ -2,7 +2,6 @@ import { PrismaService } from "src/prisma/prisma.service";
 import { CreateMediaDto } from "./dto/create-media.dto";
 import { Injectable } from "@nestjs/common";
 import { UpdateMediaDto } from "./dto/update-media.dto";
-import { title } from "process";
 
 @Injectable()
 export class MediasRepository {

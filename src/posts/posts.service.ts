@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PostsRepository } from './posts.repository';
@@ -21,6 +21,8 @@ export class PostsService {
   }
 
   async getPostbyId(id: number) {
+    const checkForPost = await this.postsRepository.getPostById(id);
+    if(checkForPost.length === 0) throw new NotFoundException(`The update request for postId=${id} does not exist`);
     const mediaData = await this.postsRepository.getPostById(id); 
     const responseMedia = mediaData.map(({ id, title, text, image }) => { 
       if(image) return { id, title, text, image }

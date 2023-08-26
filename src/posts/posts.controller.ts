@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, ParseIntPipe, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, ParseIntPipe, Put, HttpException } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -19,7 +19,11 @@ export class PostsController {
 
   @Get(':id')
   getPostById(@Param('id', ParseIntPipe) id: number) {
-    return this.postsService.getPostbyId(id);
+    try {
+      return this.postsService.getPostbyId(id);
+    } catch(error) {
+      throw new HttpException(error.message, error.statusCode);
+    }
   }
 
   @Put(':id')
