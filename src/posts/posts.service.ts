@@ -40,6 +40,9 @@ export class PostsService {
   }
 
   async deletePostById(id: number) {
+    const checkForPost = await this.postsRepository.getPostById(id);
+    if(checkForPost.length === 0) throw new NotFoundException(`The update request for postId=${id} does not exist`);
+    
     return this.postsRepository.deletePostByid(id);
   }
 }

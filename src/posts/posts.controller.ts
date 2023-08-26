@@ -37,6 +37,10 @@ export class PostsController {
 
   @Delete(':id')
   deletePostById(@Param('id', ParseIntPipe) id: number) {
-    return this.postsService.deletePostById(+id);
+    try {
+      return this.postsService.deletePostById(+id);
+    } catch(error) {
+      throw new HttpException(error.message, error.statusCode);
+    }
   }
 }
