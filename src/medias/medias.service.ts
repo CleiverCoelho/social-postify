@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Body, Injectable } from '@nestjs/common';
 import { CreateMediaDto } from './dto/create-media.dto';
 import { UpdateMediaDto } from './dto/update-media.dto';
 import { MediasRepository } from './medias.repository';
@@ -29,8 +29,8 @@ export class MediasService {
     return responseMedia;
   }
 
-  update(id: number, updateMediaDto: UpdateMediaDto) {
-    return `This action updates a #${id} media`;
+  async updateMediaById(id: number, body: UpdateMediaDto) {
+    return await this.mediasRepository.updateMediaById(id, body);
   }
 
   remove(id: number) {
