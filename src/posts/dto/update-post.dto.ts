@@ -7,7 +7,7 @@ export class UpdatePostDto extends PartialType(CreatePostDto) {
     @IsNotEmpty()
     title : string
     
-    @IsUrl()
+    @IsString()
     @IsNotEmpty()
     text: string
 

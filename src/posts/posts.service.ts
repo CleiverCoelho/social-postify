@@ -23,6 +23,7 @@ export class PostsService {
   async getPostbyId(id: number) {
     const checkForPost = await this.postsRepository.getPostById(id);
     if(checkForPost.length === 0) throw new NotFoundException(`The update request for postId=${id} does not exist`);
+    
     const mediaData = await this.postsRepository.getPostById(id); 
     const responseMedia = mediaData.map(({ id, title, text, image }) => { 
       if(image) return { id, title, text, image }
@@ -32,6 +33,9 @@ export class PostsService {
   }
 
   async updatePostById(id: number, body: UpdatePostDto) {
+    const checkForPost = await this.postsRepository.getPostById(id);
+    if(checkForPost.length === 0) throw new NotFoundException(`The update request for postId=${id} does not exist`);
+    
     return await this.postsRepository.updatePostByid(id, body);
   }
 

@@ -28,7 +28,11 @@ export class PostsController {
 
   @Put(':id')
   updatePostById(@Param('id', ParseIntPipe) id: number, @Body() updatePostDto: UpdatePostDto) {
-    return this.postsService.updatePostById(id, updatePostDto);
+    try {
+      return this.postsService.updatePostById(id, updatePostDto);
+    } catch(error) {
+      throw new HttpException(error.message, error.statusCode);
+    }
   }
 
   @Delete(':id')
