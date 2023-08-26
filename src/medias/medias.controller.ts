@@ -33,7 +33,11 @@ export class MediasController {
 
   @Put(':id')
   updateMediaById(@Param('id', ParseIntPipe) id: number, @Body() updateMediaDto: UpdateMediaDto) {
-    return this.mediasService.updateMediaById(id, updateMediaDto);
+    try {
+      return this.mediasService.updateMediaById(id, updateMediaDto);
+    }catch(error){
+      throw new HttpException(error.message, error.statusCode);
+    }
   }
 
   @Delete(':id')

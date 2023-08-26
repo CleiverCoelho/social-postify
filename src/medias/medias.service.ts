@@ -32,6 +32,9 @@ export class MediasService {
   }
 
   async updateMediaById(id: number, body: UpdateMediaDto) {
+    const { title, username } = body;
+    const checkExistingMedia = await this.mediasRepository.checkExistingMedia({ title, username });
+    if(checkExistingMedia) throw new ConflictException();
     return await this.mediasRepository.updateMediaById(id, body);
   }
 
