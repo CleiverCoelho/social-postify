@@ -4,7 +4,6 @@ import { UpdatePublicationDto } from './dto/update-publication.dto';
 import { PublicationsRepository } from './publications.repository';
 import { MediasService } from 'src/medias/medias.service';
 import { PostsService } from 'src/posts/posts.service';
-import { NotFoundError, find } from 'rxjs';
 
 @Injectable()
 export class PublicationsService {
@@ -22,14 +21,14 @@ export class PublicationsService {
   }
 
   private async checkPubNeededIds(postId : number, mediaId: number) {
+    // como puxa as funcoes da service o throw ja eh feito
+    // a partir da propria
     await this.postsService.getPostbyId(postId);
     await this.mediasService.getMediaById(mediaId);
   }
 
   async createPub(body: CreatePublicationDto) {
     const { mediaId, postId } = body;
-    // como puxa as funcoes da service o throw ja eh feito
-    // a partir da propria
     this.checkPubNeededIds(postId, mediaId);
     return await this.pubRepository.createPub(body);
   }
