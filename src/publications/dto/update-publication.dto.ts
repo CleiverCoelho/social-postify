@@ -13,5 +13,5 @@ export class UpdatePublicationDto extends PartialType(CreatePublicationDto) {
 
     @IsDataURI()
     @IsNotEmpty()
-    date: string
+    date: Date
 }
