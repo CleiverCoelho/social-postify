@@ -29,4 +29,10 @@ export class MediasRepository {
             data: body
         })
     }
+
+    async deleteMediaById (id : number) {
+        return await this.prisma.media.delete({
+            where: { id }
+        })
+    }
 }

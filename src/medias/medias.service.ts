@@ -33,7 +33,7 @@ export class MediasService {
     return await this.mediasRepository.updateMediaById(id, body);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} media`;
+  async deleteMediaById(id: number) {
+    return this.mediasRepository.deleteMediaById(id);
   }
 }

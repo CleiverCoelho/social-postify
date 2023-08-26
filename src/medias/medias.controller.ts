@@ -28,8 +28,8 @@ export class MediasController {
     return this.mediasService.updateMediaById(id, updateMediaDto);
   }
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.mediasService.remove(+id);
-  // }
+  @Delete(':id')
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.mediasService.deleteMediaById(id);
+  }
 }
