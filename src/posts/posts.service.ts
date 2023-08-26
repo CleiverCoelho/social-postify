@@ -29,8 +29,8 @@ export class PostsService {
     return responseMedia;
   }
 
-  update(id: number, updatePostDto: UpdatePostDto) {
-    return `This action updates a #${id} post`;
+  async updatePostById(id: number, body: UpdatePostDto) {
+    return await this.postsRepository.updatePostByid(id, body);
   }
 
   remove(id: number) {
