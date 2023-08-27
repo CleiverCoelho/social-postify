@@ -15,6 +15,14 @@ export function createPubSchema(mediaId: number, postId: number, date : string) 
   };
 }
 
+export function createPubSchemaInvalidDate(mediaId: number, postId: number) {
+    return {
+      mediaId,
+      postId,
+      date: "i am a string invalid date"
+    };
+  }
+
 export function createPubDB(data: CreatePubType, prisma: PrismaService) {
   return prisma.publication.create({
     data,

@@ -6,7 +6,7 @@ import { PrismaModule } from '../src/prisma/prisma.module';
 import { PrismaService } from '../src/prisma/prisma.service';
 import { createMediaDB, createMediaSchema, createMediaSchemaWithoutUsername } from './factories/medias.factory';
 import { createPostDB, createPostSchema, createPostSchemaWithoutImage, createPostSchemaWithoutImageURL } from './factories/posts.factory';
-import { createPubDB, createPubSchema } from './factories/publications.factory';
+import { createPubDB, createPubSchema, createPubSchemaInvalidDate } from './factories/publications.factory';
 
 describe('/medias', () => {
   let app: INestApplication;
@@ -272,55 +272,76 @@ describe('/publications', () => {
     expect(response.body).toHaveLength(1);
   });
 
-  // it('POST should create a new post with valid title, text and image', async () => {
-  //   //setup
-  //   const post = createPostSchema();
+  it('POST should create a new publication with valid mediaId, postId and date', async () => {
+    //setup
+    const media = await createMediaDB(createMediaSchema(), prisma); 
+    const post = await createPostDB(createPostSchema(), prisma);
+    const publication = createPubSchema(media.id, post.id, 'future');
+ 
+    let response = await request(app.getHttpServer()).post('/publications').send(publication);
+    expect(response.statusCode).toBe(HttpStatus.CREATED);
+  });
 
-  //   let response = await request(app.getHttpServer()).post('/publications').send(post);
-  //   expect(response.statusCode).toBe(HttpStatus.CREATED);
-  //   console.log(response.error);
-  // });
+  it('POST should respond with status 400 when mediaId is invalid', async () => {
+    //setup
+    const post = await createPostDB(createPostSchema(), prisma);
+    const publication = createPubSchema(5, post.id, 'future');
 
-  // it('POST should respond with status 201 witih body without image', async () => {
-  //   //setup
-  //   const post = createPostSchemaWithoutImage(); 
+    let response = await request(app.getHttpServer()).post('/publications').send(post);
+    expect(response.statusCode).toBe(HttpStatus.BAD_REQUEST);
+  });
 
-  //   let response = await request(app.getHttpServer()).post('/publications').send(post);
-  //   expect(response.statusCode).toBe(HttpStatus.CREATED);
-  // });
+  it('POST should respond with status 400 when postId is invalid', async () => {
+    //setup
+    const post = await createPostDB(createPostSchema(), prisma);
+    const publication = createPubSchema(5, post.id, 'future');
 
-  // it('POST should respond with status 400 when image is not a url', async () => {
-  //   //setup
-  //   const post = createPostSchemaWithoutImageURL(); 
+    let response = await request(app.getHttpServer()).post('/publications').send(post);
+    expect(response.statusCode).toBe(HttpStatus.BAD_REQUEST);
+  });
 
-  //   let response = await request(app.getHttpServer()).post('/publications').send(post);
-  //   expect(response.statusCode).toBe(HttpStatus.BAD_REQUEST);
-  // });
+  it('POST should respond with status 400 when date is invalid', async () => {
+    //setup
+    const media = await createMediaDB(createMediaSchema(), prisma); 
+    const post = await createPostDB(createPostSchema(), prisma);
+    const publication = createPubSchemaInvalidDate(media.id, post.id);
 
-  // it('GET :id should respond with status 200 for valid publicationId', async () => {
-  //   //setup
-  //   const post = await createPostDB(createPostSchema(), prisma); 
+    let response = await request(app.getHttpServer()).post('/publications').send(post);
+    expect(response.statusCode).toBe(HttpStatus.BAD_REQUEST);
+  });
 
-  //   let response = await request(app.getHttpServer()).get(`/publications/${post.id}`);
-  //   expect(response.statusCode).toBe(HttpStatus.OK);
-  // });
+  it('GET :id should respond with status 200 for valid publicationId', async () => {
+    //setup
+    const media = await createMediaDB(createMediaSchema(), prisma); 
+    const post = await createPostDB(createPostSchema(), prisma);
+    const publication = await createPubDB(createPubSchema(media.id, post.id, 'future'), prisma);
 
-  // it('GET :id should respond with status 404 for invalid publicationId', async () => {
-  //   //setup
-  //   const post = await createPostDB(createPostSchema(), prisma); 
+    let response = await request(app.getHttpServer()).get(`/publications/${publication.id}`);
+    expect(response.statusCode).toBe(HttpStatus.OK);
+  });
 
-  //   let response = await request(app.getHttpServer()).get(`/publications/5`);
-  //   expect(response.statusCode).toBe(HttpStatus.NOT_FOUND);
-  // });
+  it('GET :id should respond with status 404 for invalid publicationId', async () => {
+    //setup
+    const media = await createMediaDB(createMediaSchema(), prisma); 
+    const post = await createPostDB(createPostSchema(), prisma);
+    const publication = await createPubDB(createPubSchema(media.id, post.id, 'future'), prisma);
 
-  // it('PUT :id should respond with status 200 for postId, title, text and image', async () => {
-  //   //setup
-  //   const post = await createPostDB(createPostSchema(), prisma); 
-  //   const updatedPost = createPostSchemaWithoutImage(); 
+    let response = await request(app.getHttpServer()).get(`/publications/5`);
+    expect(response.statusCode).toBe(HttpStatus.NOT_FOUND);
+  });
 
-  //   let response = await request(app.getHttpServer()).put(`/publications/${post.id}`).send(updatedPost);
-  //   expect(response.statusCode).toBe(HttpStatus.OK);
-  // });
+  it('PUT :id should respond with status 200 for postId, title, text and image', async () => {
+    //setup    
+    const media = await createMediaDB(createMediaSchema(), prisma); 
+    const post = await createPostDB(createPostSchema(), prisma);
+    const publication = await createPubDB(createPubSchema(media.id, post.id, 'future'), prisma);
+ 
+    const updatedPublication = (createPubSchema(media.id, post.id, 'future'));
+ 
+
+    let response = await request(app.getHttpServer()).put(`/publications/${publication.id}`).send(updatedPublication);
+    expect(response.statusCode).toBe(HttpStatus.OK);
+  });
 
   // it('PUT :id should respond with status 400 for valid postId, title, text but invalid imageURL', async () => {
   //   //setup
