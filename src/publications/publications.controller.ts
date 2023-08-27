@@ -19,8 +19,7 @@ export class PublicationsController {
 
   @Get()
   findAllPubs(@Query() query : OptionalFindAllFilter) {
-    const booleanPublished = query.published === "true" ? true : false; 
-    return this.publicationsService.findAllPubs(booleanPublished , query.after);
+    return this.publicationsService.findAllPubs(query.published , query.after);
   }
 
   @Get(':id')

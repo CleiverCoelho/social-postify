@@ -13,13 +13,13 @@ export class PublicationsRepository {
         });
     }
 
-    async findAllPubs (published: boolean, after: Date) {
+    async findAllPubs (published: string, after: Date) {
         const currentDate = new Date();
         return await this.prisma.publication.findMany({
             where: {
                 date: {
                     lt: published ? currentDate : undefined,
-                    gt: !published ? currentDate : undefined
+                    gt: published === "false" ? currentDate : undefined
                 },
                 AND : {
                     date: {
