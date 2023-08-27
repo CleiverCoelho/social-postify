@@ -34,6 +34,14 @@ export function createPostSchemaWithoutImage() {
     };
 }
 
+export function createPostSchemaWithoutImageURL() {
+    return {
+      title: faker.internet.domainName(),
+      text: faker.lorem.text(),
+      image: "eu sou uma imagem string"
+    };
+}
+
 export function createPostSchemaWithoutTitle() {
     return {
       text: faker.lorem.text(),
