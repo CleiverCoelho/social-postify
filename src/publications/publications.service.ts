@@ -33,8 +33,8 @@ export class PublicationsService {
     return await this.pubRepository.createPub(body);
   }
 
-  async findAllPubs() {
-    const mediaData = await this.pubRepository.findAllPubs();
+  async findAllPubs(published: boolean, after: Date) {
+    const mediaData = await this.pubRepository.findAllPubs(published, after);
     const responseMedia = mediaData.map(({ id, mediaId, postId, date }) => { 
       return { id, mediaId, postId, date }
     })

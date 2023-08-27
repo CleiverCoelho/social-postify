@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, HttpException, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, HttpException, Put, Optional, Query } from '@nestjs/common';
 import { PublicationsService } from './publications.service';
 import { CreatePublicationDto } from './dto/create-publication.dto';
 import { UpdatePublicationDto } from './dto/update-publication.dto';
+import { OptionalFindAllFilter } from './dto/optional-filter.dto';
 
 @Controller('publications')
 export class PublicationsController {
@@ -17,8 +18,9 @@ export class PublicationsController {
   }
 
   @Get()
-  findAllPubs() {
-    return this.publicationsService.findAllPubs();
+  findAllPubs(@Query() query : OptionalFindAllFilter) {
+    const booleanPublished = query.published === "true" ? true : false; 
+    return this.publicationsService.findAllPubs(booleanPublished , query.after);
   }
 
   @Get(':id')

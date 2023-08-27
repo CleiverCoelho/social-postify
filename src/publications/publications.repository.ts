@@ -13,8 +13,21 @@ export class PublicationsRepository {
         });
     }
 
-    async findAllPubs () {
-        return await this.prisma.publication.findMany({});
+    async findAllPubs (published: boolean, after: Date) {
+        const currentDate = new Date();
+        return await this.prisma.publication.findMany({
+            where: {
+                date: {
+                    lt: published ? currentDate : undefined,
+                    gt: !published ? currentDate : undefined
+                },
+                AND : {
+                    date: {
+                        gt: after ? new Date(after) : undefined
+                    }
+                }
+            }
+        });
     }
 
     async getPubById (id : number) {
