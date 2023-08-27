@@ -343,48 +343,60 @@ describe('/publications', () => {
     expect(response.statusCode).toBe(HttpStatus.OK);
   });
 
-  // it('PUT :id should respond with status 400 for valid postId, title, text but invalid imageURL', async () => {
-  //   //setup
-  //   const post = await createPostDB(createPostSchema(), prisma); 
-  //   const updatedPost = createPostSchemaWithoutImageURL(); 
+  it('PUT :id should respond with status 403 if the publication has been already published', async () => {
+    //setup    
+    const media = await createMediaDB(createMediaSchema(), prisma); 
+    const post = await createPostDB(createPostSchema(), prisma);
+    const publication = await createPubDB(createPubSchema(media.id, post.id, 'past'), prisma);
+ 
+    const updatedPublication = (createPubSchema(media.id, post.id, 'future'));
+ 
 
-  //   let response = await request(app.getHttpServer()).put(`/publications/${post.id}`).send(updatedPost);
-  //   expect(response.statusCode).toBe(HttpStatus.BAD_REQUEST);
-  // });
+    let response = await request(app.getHttpServer()).put(`/publications/${publication.id}`).send(updatedPublication);
+    expect(response.statusCode).toBe(HttpStatus.FORBIDDEN);
+  });
 
-  // it('PUT :id should respond with status 404 for invalid publicationId', async () => {
-  //   //setup
-  //   const post = await createPostDB(createPostSchema(), prisma); 
-  //   const updatedPost = createPostSchema(); 
+  it('PUT :id should respond with status 404 if the mediaId is invalid', async () => {
+    //setup    
+    const media = await createMediaDB(createMediaSchema(), prisma); 
+    const post = await createPostDB(createPostSchema(), prisma);
+    const publication = await createPubDB(createPubSchema(media.id, post.id, 'future'), prisma);
+ 
+    const updatedPublication = (createPubSchema(5, post.id, 'future'));
+ 
 
-  //   let response = await request(app.getHttpServer()).put(`/publications/5`).send(updatedPost);
-  //   expect(response.statusCode).toBe(HttpStatus.NOT_FOUND);
-  // });
+    let response = await request(app.getHttpServer()).put(`/publications/${publication.id}`).send(updatedPublication);
+    expect(response.statusCode).toBe(HttpStatus.NOT_FOUND);
+  });
 
-  // it('DELETE :id should respond with status 200 for valid publicationId', async () => {
-  //   //setup
-  //   const post = await createPostDB(createPostSchema(), prisma); 
+  it('PUT :id should respond with status 404 if the postId is invalid', async () => {
+    //setup    
+    const media = await createMediaDB(createMediaSchema(), prisma); 
+    const post = await createPostDB(createPostSchema(), prisma);
+    const publication = await createPubDB(createPubSchema(media.id, post.id, 'future'), prisma);
+ 
+    const updatedPublication = (createPubSchema(media.id, 5, 'future'));
+ 
 
-  //   let response = await request(app.getHttpServer()).delete(`/publications/${post.id}`)
-  //   expect(response.statusCode).toBe(HttpStatus.OK);
-  // });
+    let response = await request(app.getHttpServer()).put(`/publications/${publication.id}`).send(updatedPublication);
+    expect(response.statusCode).toBe(HttpStatus.NOT_FOUND);
+  });
 
-  // it('DELETE :id should respond with status 409 if mediaId is associated with a publication', async () => {
-  //   //setup
-  //   const media = await createMediaDB(createMediaSchema(), prisma); 
-  //   const post = await createPostDB(createPostSchema(), prisma);
-  //   const publication = await createPubDB(createPubSchema(media.id, post.id, 'future'), prisma);
+  it('DELETE :id should respond with status 200 for valid publicationId', async () => {
+    //setup
+    const media = await createMediaDB(createMediaSchema(), prisma); 
+    const post = await createPostDB(createPostSchema(), prisma);
+    const publication = await createPubDB(createPubSchema(media.id, post.id, 'future'), prisma);
+ 
+    let response = await request(app.getHttpServer()).delete(`/publications/${publication.id}`)
+    expect(response.statusCode).toBe(HttpStatus.OK);
+  });
 
-  //   let response = await request(app.getHttpServer()).delete(`/publications/${post.id}`)
-  //   expect(response.statusCode).toBe(HttpStatus.FORBIDDEN);
-  // });
+  it('DELETE :id should respond with status 404 for invalid publicationId', async () => {
+    //setup
 
-  // it('DELETE :id should respond with status 404 for invalid publicationId', async () => {
-  //   //setup
-  //   const post = await createPostDB(createPostSchema(), prisma);
-
-  //   let response = await request(app.getHttpServer()).delete(`/publications/5`)
-  //   expect(response.statusCode).toBe(HttpStatus.NOT_FOUND);
-  // });
+    let response = await request(app.getHttpServer()).delete(`/publications/5`)
+    expect(response.statusCode).toBe(HttpStatus.NOT_FOUND);
+  });
 
 });

@@ -67,11 +67,14 @@ export class PublicationsService {
   }
 
   async updatePubById(id: number, body: UpdatePublicationDto) {
+    const { mediaId, postId } = body;
+    await this.postsService.getPostbyId(postId);
+    await this.mediasService.getMediaById(mediaId);
+
     const checkPub = await this.pubRepository.getPubById(id);
     if(checkPub.length === 0) throw new NotFoundException(`there is no publication for given id=${id}`);
 
     if(this.checkPreviousDate(checkPub[0].date)) throw new ForbiddenException(`publciaiton with given id=${id} has already been published`)
-    this.checkPubNeededIds(checkPub[0].postId, checkPub[0].mediaId);
 
     return await this.pubRepository.updatePubById(id, body);
   }
