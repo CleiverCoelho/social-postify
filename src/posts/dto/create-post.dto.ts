@@ -5,7 +5,7 @@ export class CreatePostDto {
     @IsNotEmpty()
     title : string
     
-    @IsUrl()
+    @IsString()
     @IsNotEmpty()
     text: string
 
