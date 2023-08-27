@@ -261,13 +261,38 @@ describe('/publications', () => {
     await app.init();
   });
 
-  it('GET should respond with status code 200 and response list length equals to 1', async () => {
+  it('GET should respond with status code 200 without optional filter and response list length equals to 2', async () => {
+    //setup
+    const media = await createMediaDB(createMediaSchema(), prisma); 
+    const post = await createPostDB(createPostSchema(), prisma);
+    const publication = await createPubDB(createPubSchema(media.id, post.id, 'future'), prisma);
+    const publication2 = await createPubDB(createPubSchema(media.id, post.id, 'past'), prisma);
+
+    let response = await request(app.getHttpServer()).get('/publications');
+    expect(response.statusCode).toBe(200);
+    expect(response.body).toHaveLength(2);
+  });
+
+  it('GET should respond with status code 200 to test optional filter condition response list length equals to 0', async () => {
     //setup
     const media = await createMediaDB(createMediaSchema(), prisma); 
     const post = await createPostDB(createPostSchema(), prisma);
     const publication = await createPubDB(createPubSchema(media.id, post.id, 'future'), prisma);
     
-    let response = await request(app.getHttpServer()).get('/publications');
+    let response = await request(app.getHttpServer()).get('/publications?published=true');
+    expect(response.statusCode).toBe(200);
+    expect(response.body).toHaveLength(0);
+  });
+
+  it('GET should respond with status code 200 to test optional filter condition response list length equals to 1', async () => {
+    //setup
+    const media = await createMediaDB(createMediaSchema(), prisma); 
+    const post = await createPostDB(createPostSchema(), prisma);
+    const publication = await createPubDB(createPubSchema(media.id, post.id, 'future'), prisma);
+    const publication2 = await createPubDB(createPubSchema(media.id, post.id, 'future'), prisma);
+    const publication3 = await createPubDB(createPubSchema(media.id, post.id, 'past'), prisma);
+
+    let response = await request(app.getHttpServer()).get('/publications?published=true');
     expect(response.statusCode).toBe(200);
     expect(response.body).toHaveLength(1);
   });
